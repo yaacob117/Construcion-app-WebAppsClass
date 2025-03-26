@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
-            $table->string('invoice_number')->primary();
+        Schema::create('customer_orders', function (Blueprint $table) {
+            $table->id();
+            $table->string('invoice_number')->unique();
             $table->string('customer_number');
             $table->string('customer_name');
-            $table->string('fiscal_data')->nullable();
+            $table->string('fiscal_data');
             $table->date('order_date');
-            $table->text('delivery_address');
-            $table->text('notes')->nullable();
-            $table->foreignId('status_id')->constrained('order_statuses');
+            $table->string('delivery_address');
+            $table->string('notes')->nullable();
+            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            $table->double('total_amount', 10, 2);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
-
-            $table->foreign('customer_number')->references('customer_number')->on('customers')->onDelete('cascade');
         });
     }
 
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('customer_orders');
     }
 };

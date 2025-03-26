@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('delivery_evidence', function (Blueprint $table) {
+        Schema::create('evidence_pictures', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id');
-            $table->string('photo_url');
-            $table->string('photo_type');
-            $table->timestamp('uploaded_at')->useCurrent();
+            $table->foreignId('order_id')->constrained('customer_orders')->onDelete('cascade');
+            $table->string('sent_photo_url');
+            $table->string('received_photo_url')->nullable();
+            $table->dateTime('sent_at');
+            $table->dateTime('received_at')->nullable();
             $table->string('uploaded_by');
             $table->timestamps();
-
-            $table->foreign('order_id')->references('invoice_number')->on('orders')->onDelete('cascade');
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('delivery_evidence');
+        Schema::dropIfExists('evidence_pictures');
     }
 };
