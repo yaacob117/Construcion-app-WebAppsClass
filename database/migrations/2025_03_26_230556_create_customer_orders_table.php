@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });
-    }
+    }   
 
     /**
      * Reverse the migrations.
