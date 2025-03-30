@@ -20,8 +20,7 @@ return new class extends Migration
             $table->date('order_date');
             $table->string('delivery_address');
             $table->string('notes')->nullable();
-            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
-            $table->double('total_amount', 10, 2);
+            $table->enum('status', ['ORDERED', 'IN_PROCESS', 'IN_ROUTE', 'DELIVERED'])->default('ORDERED');            $table->double('total_amount', 10, 2);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
         });

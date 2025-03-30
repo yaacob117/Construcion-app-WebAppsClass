@@ -14,7 +14,7 @@ class OrderProductController extends Controller
      */
     public function index()
     {
-        $order_products = OrderProduct::all();
+        $order_products = \App\Models\OrderProduct::with(['customer_order', 'enterprise_order', 'product'])->get();
         return view('order_products.index', compact('order_products'));
     }
 
@@ -24,8 +24,9 @@ class OrderProductController extends Controller
     public function create()
     {
         $customer_orders = CustomerOrder::all();
-        $products =  Product::all();
-        return view('order_products.create', compact('customer_orders', 'products'));
+        $enterprise_orders = \App\Models\EnterpriseOrder::all();
+        $products = Product::all();
+        return view('order_products.create', compact('customer_orders', 'enterprise_orders', 'products'));
     }
 
     /**
@@ -33,13 +34,22 @@ class OrderProductController extends Controller
      */
     public function store(Request $request)
     {
+        $orderTypeAndId = explode('_', $request->order_id);
+        $orderType = $orderTypeAndId[0];
+        $orderId = $orderTypeAndId[1];
+
+        if (!is_numeric($orderId)) {
+            return back()->withErrors(['order_id' => 'Invalid order ID format.']);
+        }
+
         OrderProduct::create([
-            'order_id' => $request->order_id,
+            'order_id' => $orderId,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'unit_price' => $request->unit_price,
             'total_price' => $request->total_price,
         ]);
+
         return to_route('order_products.index');
     }
 
@@ -57,9 +67,9 @@ class OrderProductController extends Controller
      */
     public function edit(string $id)
     {
-        $order_product = OrderProduct::find($id);
+        $order_product = OrderProduct::findOrFail($id);
         $customer_orders = CustomerOrder::all();
-        $products =  Product::all();
+        $products = Product::all();
         return view('order_products.edit', compact('order_product', 'customer_orders', 'products'));
     }
 

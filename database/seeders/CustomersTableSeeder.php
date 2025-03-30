@@ -30,5 +30,6 @@ class CustomersTableSeeder extends Seeder
                 'address' => 'Avenue #456',
             ],
         ]);
+
     }
 }

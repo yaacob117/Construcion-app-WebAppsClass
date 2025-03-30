@@ -2,23 +2,41 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\OrderProduct;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OrderProduct>
- */
 class OrderProductFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
     protected $model = OrderProduct::class;
-    public function definition(): array
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
     {
+        $orderIds = DB::table('customer_orders')->pluck('id')->toArray();
+        $productIds = DB::table('products')->pluck('id')->toArray();
+        
+        $orderId = !empty($orderIds) ? $this->faker->randomElement($orderIds) : 2;
+        $productId = !empty($productIds) ? $this->faker->randomElement($productIds) : 1;
+        
+        $quantity = $this->faker->numberBetween(1, 10);
+        $unitPrice = $this->faker->numberBetween(100, 1000);
+        
         return [
-            'order_id' =>  $this->faker->numberBetween(1, 10),
-            'product_id' =>  $this->faker->numberBetween(1, 10),
-            'quantity' =>  $this->faker->numberBetween(1, 10),
-            'unit_price' =>  $this->faker->numberBetween(1, 1000),
-            'total_price' =>  $this->faker->numberBetween(1, 10000),
+            'order_id' => $orderId,
+            'product_id' => $productId,
+            'quantity' => $quantity,
+            'unit_price' => $unitPrice,
+            'total_price' => $quantity * $unitPrice,
         ];
     }
 }

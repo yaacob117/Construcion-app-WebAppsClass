@@ -29,14 +29,14 @@
                         <td>{{ $customer->fiscalData }}</td>
                         <td>{{ $customer->address }}</td>
                         <td>
-                            <a href="{{ route('customers.show', $customer->customerNumber) }}">View</a>
-                            <a href="{{ route('customers.edit', $customer->customerNumber) }}">Edit</a>
-                            <form action="{{ route('customers.destroy', $customer->customerNumber) }}" method="POST" style="display: inline;">
+                            <a href="{{ route('customers.show', $customer->id) }}">View</a>
+                            <a href="{{ route('customers.edit', $customer->id) }}">Edit</a>
+                            <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit">Delete</button>
                             </form>
-                            <a href="{{ route('customers.order-status', ['customer' => $customer->customerNumber, 'invoiceNumber' => 'INV-001']) }}">Order status</a>
+                            <a href="{{ route('customers.order-status', ['customer' => $customer->id, 'invoiceNumber' => 'INV-001']) }}">Order status</a>
                         </td>
                     </tr>
                 @endforeach

@@ -16,22 +16,4 @@ class Product extends Model
         'price',
         'supplier',
     ];
-
-    /**
-     * Relación con tabla categorías 
-     */
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    /**
-     * Relación con tabla pedidos 
-     */
-    public function orders()
-    {
-        return $this->belongsToMany(Order::class, 'order_product')
-                    ->withPivot('quantity', 'price')
-                    ->withTimestamps();
-    }
 }

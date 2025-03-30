@@ -23,12 +23,12 @@
 
         <div>
             <label for="companyName">Company Name:</label>
-            <input type="text" name="companyName" id="companyName" required>
+            <input type="text" name="companyName" id="companyName">
         </div>
 
         <div>
             <label for="fiscalData">Fiscal Data:</label>
-            <input type="text" name="fiscalData" id="fiscalData" required>
+            <input type="text" name="fiscalData" id="fiscalData">
         </div>
 
         <div>
