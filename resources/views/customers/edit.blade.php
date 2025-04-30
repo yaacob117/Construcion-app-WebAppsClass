@@ -7,7 +7,7 @@
 <body>
     <h1>Edit Customer</h1>
 
-    <form action="{{ route('customers.update', $customer->customerNumber) }}" method="POST">
+    <form action="{{ route('customers.update', $customer->id) }}" method="POST">       
         @csrf
         @method('PUT')
 
@@ -23,17 +23,17 @@
 
         <div>
             <label for="companyName">Company Name:</label>
-            <input type="text" name="companyName" id="companyName" value="{{ $customer->companyName }}" required>
+            <input type="text" name="companyName" id="companyName" value="{{ $customer->companyName }}">
         </div>
 
         <div>
             <label for="fiscalData">Fiscal Data:</label>
-            <input type="text" name="fiscalData" id="fiscalData" value="{{ $customer->fiscalData }}" required>
+            <input type="text" name="fiscalData" id="fiscalData" value="{{ $customer->fiscalData }}">
         </div>
 
         <div>
             <label for="address">Address:</label>
-            <textarea name="address" id="address">{{ $customer->address }}</textarea>
+            <textarea name="address" id="address" required>{{ $customer->address }}</textarea>
         </div>
 
         <button type="submit">Update</button>

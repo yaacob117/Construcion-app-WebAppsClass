@@ -12,6 +12,37 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::factory()->count(50)->create();
+        Product::insert([
+            [
+                'id' => 1,
+                'product_id' => 'PROD-001',
+                'name' => 'Product A',
+                'description' => 'Description for Product A',
+                'price' => 100.00,
+                'supplier' => 'Supplier A',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 2,
+                'product_id' => 'PROD-002',
+                'name' => 'Product B',
+                'description' => 'Description for Product B',
+                'price' => 200.00,
+                'supplier' => 'Supplier B',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => 3,
+                'product_id' => 'PROD-003',
+                'name' => 'Product C',
+                'description' => 'Description for Product C',
+                'price' => 300.00,
+                'supplier' => 'Supplier C',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }
