@@ -24,19 +24,27 @@ class OrderProductFactory extends Factory
     {
         $orderIds = DB::table('customer_orders')->pluck('id')->toArray();
         $productIds = DB::table('products')->pluck('id')->toArray();
-        
-        $orderId = !empty($orderIds) ? $this->faker->randomElement($orderIds) : 2;
-        $productId = !empty($productIds) ? $this->faker->randomElement($productIds) : 1;
-        
+
+        if (empty($orderIds) || empty($productIds)) {
+            // Si no hay órdenes o productos, la factory no puede crear una relación válida.
+            // Retornar un array vacío significa que la llamada a ->create() no hará nada.
+            // Esto es mejor que lanzar un error o crear datos inconsistentes.
+            if (app()->runningInConsole()) {
+                // Opcional: Informar en consola si se está ejecutando db:seed
+                // $this->command->info('Skipping OrderProductFactory: No customer orders or products found.');
+            }
+            return []; 
+        }
+
         $quantity = $this->faker->numberBetween(1, 10);
-        $unitPrice = $this->faker->numberBetween(100, 1000);
-        
+        $unit_price = $this->faker->randomFloat(2, 10, 500);
+
         return [
-            'order_id' => $orderId,
-            'product_id' => $productId,
+            'order_id' => $this->faker->randomElement($orderIds),
+            'product_id' => $this->faker->randomElement($productIds),
             'quantity' => $quantity,
-            'unit_price' => $unitPrice,
-            'total_price' => $quantity * $unitPrice,
+            'unit_price' => $unit_price,
+            'total_price' => $quantity * $unit_price, // Calculado
         ];
     }
 }

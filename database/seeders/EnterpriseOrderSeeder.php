@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\EnterpriseOrder;
-use Illuminate\Database\Seeder;
 use App\Enums\OrderStatus;
+use Illuminate\Database\Seeder;
 
 class EnterpriseOrderSeeder extends Seeder
 {
@@ -40,5 +40,7 @@ class EnterpriseOrderSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        EnterpriseOrder::factory()->count(15)->create();
     }
 }

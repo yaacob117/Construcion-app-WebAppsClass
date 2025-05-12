@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Customer;
 
 class CustomersTableSeeder extends Seeder
 {
@@ -31,5 +32,6 @@ class CustomersTableSeeder extends Seeder
             ],
         ]);
 
+        Customer::factory()->count(10)->create();
     }
 }

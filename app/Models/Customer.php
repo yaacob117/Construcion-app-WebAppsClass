@@ -18,4 +18,9 @@ class Customer extends Model
         'fiscalData',
         'address',
     ];
+
+    public function customerOrders()
+    {
+        return $this->hasMany(CustomerOrder::class, 'customer_number', 'customerNumber');
+    }
 }

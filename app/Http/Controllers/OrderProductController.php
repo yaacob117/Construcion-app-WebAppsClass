@@ -23,7 +23,8 @@ class OrderProductController extends Controller
      */
     public function create()
     {
-        $customer_orders = CustomerOrder::all();
+        // Solo mostrar órdenes que pueden recibir productos
+        $customer_orders = CustomerOrder::whereNotIn('status', ['DELIVERED', 'IN_ROUTE'])->get();
         $enterprise_orders = \App\Models\EnterpriseOrder::all();
         $products = Product::all();
         return view('order_products.create', compact('customer_orders', 'enterprise_orders', 'products'));
@@ -42,15 +43,31 @@ class OrderProductController extends Controller
             return back()->withErrors(['order_id' => 'Invalid order ID format.']);
         }
 
-        OrderProduct::create([
+        // Verificar si es una orden de cliente y si puede recibir productos
+        if ($orderType === 'customer') {
+            $order = CustomerOrder::findOrFail($orderId);
+            if (!$order->canAddProducts()) {
+                return back()->withErrors(['order_id' => 'Cannot add products to completed or in-route orders.']);
+            }
+        }
+
+        // Calcular el total_price automáticamente
+        $total_price = $request->quantity * $request->unit_price;
+
+        $orderProduct = OrderProduct::create([
             'order_id' => $orderId,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'unit_price' => $request->unit_price,
-            'total_price' => $request->total_price,
+            'total_price' => $total_price,
         ]);
 
-        return to_route('order_products.index');
+        // Actualizar el total de la orden si es una orden de cliente
+        if ($orderType === 'customer') {
+            $order->updateTotalAmount();
+        }
+
+        return to_route('order_products.index')->with('success', 'Product added to order successfully.');
     }
 
     /**
@@ -68,7 +85,13 @@ class OrderProductController extends Controller
     public function edit(string $id)
     {
         $order_product = OrderProduct::findOrFail($id);
-        $customer_orders = CustomerOrder::all();
+        
+        // Verificar si la orden puede ser editada
+        if ($order_product->customer_order && !$order_product->customer_order->canAddProducts()) {
+            return back()->withErrors(['error' => 'Cannot edit products of completed or in-route orders.']);
+        }
+
+        $customer_orders = CustomerOrder::whereNotIn('status', ['DELIVERED', 'IN_ROUTE'])->get();
         $products = Product::all();
         return view('order_products.edit', compact('order_product', 'customer_orders', 'products'));
     }
@@ -79,14 +102,29 @@ class OrderProductController extends Controller
     public function update(Request $request, string $id)
     {
         $order_product = OrderProduct::find($id);
+
+        // Verificar si la orden puede ser editada
+        if ($order_product->customer_order && !$order_product->customer_order->canAddProducts()) {
+            return back()->withErrors(['error' => 'Cannot edit products of completed or in-route orders.']);
+        }
+
+        // Calcular el total_price automáticamente
+        $total_price = $request->quantity * $request->unit_price;
+
         $order_product->update([
             'order_id' => $request->order_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'unit_price' => $request->unit_price,
-            'total_price' => $request->total_price,
+            'total_price' => $total_price,
         ]);
-        return to_route('order_products.index');
+
+        // Actualizar el total de la orden si es una orden de cliente
+        if ($order_product->customer_order) {
+            $order_product->customer_order->updateTotalAmount();
+        }
+
+        return to_route('order_products.index')->with('success', 'Order product updated successfully.');
     }
 
     /**
@@ -95,7 +133,19 @@ class OrderProductController extends Controller
     public function destroy(string $id)
     {
         $order_product = OrderProduct::find($id);
+
+        // Verificar si la orden puede ser editada
+        if ($order_product->customer_order && !$order_product->customer_order->canAddProducts()) {
+            return back()->withErrors(['error' => 'Cannot delete products from completed or in-route orders.']);
+        }
+
         $order_product->delete();
-        return to_route('order_products.index');
+
+        // Actualizar el total de la orden si es una orden de cliente
+        if ($order_product->customer_order) {
+            $order_product->customer_order->updateTotalAmount();
+        }
+
+        return to_route('order_products.index')->with('success', 'Order product deleted successfully.');
     }
 }

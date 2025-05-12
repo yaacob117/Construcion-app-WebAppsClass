@@ -44,5 +44,8 @@ class ProductSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        // Poblar con datos adicionales usando la factory
+        Product::factory()->count(10)->create(); // Crea 10 productos adicionales
     }
 }

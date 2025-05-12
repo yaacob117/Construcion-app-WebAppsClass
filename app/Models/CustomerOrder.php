@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory; // Importar el trait
 use Illuminate\Database\Eloquent\Model;
 
 class CustomerOrder extends Model
 {
+    use HasFactory; // Usar el trait
+
     protected $fillable = [
         'invoice_number',
         'customer_number',
@@ -35,5 +38,36 @@ class CustomerOrder extends Model
     {
         $this->is_deleted = false;
         $this->save();
+    }
+
+    // Relación con Customer (opcional, pero recomendable si tienes un modelo Customer)
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_number', 'customerNumber');
+    }
+
+    // Relación con OrderProduct (opcional, pero recomendable)
+    public function orderProducts()
+    {
+        return $this->hasMany(OrderProduct::class, 'order_id');
+    }
+
+    // Nuevo método para calcular y actualizar el total
+    public function updateTotalAmount()
+    {
+        $total = $this->orderProducts()->sum('total_price');
+        $this->update(['total_amount' => $total]);
+    }
+
+    // Nuevo método para verificar si la orden está completada
+    public function isCompleted()
+    {
+        return $this->status === 'DELIVERED';
+    }
+
+    // Nuevo método para verificar si se pueden agregar productos
+    public function canAddProducts()
+    {
+        return !in_array($this->status, ['DELIVERED', 'IN_ROUTE']);
     }
 }

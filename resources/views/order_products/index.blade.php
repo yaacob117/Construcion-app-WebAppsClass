@@ -1,57 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Products</title>
+    <title>Order Products List</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-<h1>Order Products</h1>
+<body class="bg-gray-100 text-gray-900">
+    @include('layouts.navbar')
 
-<table>
-    <thead>
-    <tr>
-        <th>Id</th>
-        <th>Order</th>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Unit Price</th>
-        <th>Total Price</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach($order_products as $order_product)
-        <tr>
-            <td>{{ $order_product->id }}</td>
-            <td>
-                @if($order_product->customer_order)
-                    Customer Order: {{ $order_product->customer_order->invoice_number }}
-                @elseif($order_product->enterprise_order)
-                    Enterprise Order: {{ $order_product->enterprise_order->order_number }}
-                @else
-                    N/A
-                @endif
-            </td>
-            <td>{{ $order_product->product ? $order_product->product->name : 'N/A' }}</td>
-            <td>{{ $order_product->quantity }}</td>
-            <td>{{ $order_product->unit_price }}</td>
-            <td>{{ $order_product->total_price }}</td>
-            <td>
-                <a href="{{ route('order_products.show', $order_product->id) }}">Show</a>
-                <a href="{{ route('order_products.edit', $order_product->id) }}">Edit</a>
-                <form action="{{ route('order_products.destroy', $order_product->id) }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <input type="submit" value="Delete" onclick="return confirm('Are you sure?')">
-                </form>
-            </td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-700">Order Products List</h1>
 
-<hr>
-<a href="{{ route('order_products.create') }}">Create New Order Product</a>
+        <div class="mb-6 flex justify-end">
+            <a href="{{ route('order_products.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">Create New Order Product</a>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order (Type - ID)</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach ($order_products as $orderProduct)
+                        <tr class="hover:bg-gray-50 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $orderProduct->id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                @if($orderProduct->customer_order)
+                                    Customer - {{ $orderProduct->customer_order->invoice_number }} (ID: {{ $orderProduct->order_id }})
+                                @elseif($orderProduct->enterprise_order)
+                                    Enterprise - {{ $orderProduct->enterprise_order->order_number }} (ID: {{ $orderProduct->order_id }})
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $orderProduct->product->name ?? 'N/A' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $orderProduct->quantity }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($orderProduct->unit_price, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($orderProduct->total_price, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                <a href="{{ route('order_products.show', $orderProduct->id) }}" class="text-indigo-600 hover:text-indigo-900">View</a>
+                                <a href="{{ route('order_products.edit', $orderProduct->id) }}" class="text-green-600 hover:text-green-900">Edit</a>
+                                <form action="{{ route('order_products.destroy', $orderProduct->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>

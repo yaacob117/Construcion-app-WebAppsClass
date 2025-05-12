@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CustomerOrder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use function now;
@@ -47,5 +48,7 @@ class CustomerOrdersTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+
+        CustomerOrder::factory()->count(20)->create();
     }
 }

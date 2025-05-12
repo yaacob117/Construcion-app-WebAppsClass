@@ -4,59 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Customer Order</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-<h1>Create Customer Order</h1>
+<body class="bg-white text-gray-900">
+    @include('layouts.navbar')
 
-<form action="{{ route('customer_orders.store') }}" method="POST">
-    @csrf
-    <label for="invoice_number">Invoice Number</label>
-    <input type="text" name="invoice_number" id="invoice_number">
-    <br><br>
+    <div class="container mx-auto py-8 px-4 max-w-4xl">
+        <h1 class="text-3xl font-bold mb-8 text-center text-blue-800">Create Customer Order</h1>
 
-    <label for="customer_number">Customer</label>
-    <select name="customer_number" id="customer_number">
-        @foreach($customers as $customer)
-            <option value="{{ $customer->id }}">{{ $customer->name }}</option>
-        @endforeach
-    </select>
-    <br><br>
+        <form action="{{ route('customer_orders.store') }}" method="POST" class="bg-gray-50 shadow-lg rounded-lg p-8 border border-gray-200">
+            @csrf
 
-    <label for="customer_name">Customer Name</label>
-    <input type="text" name="customer_name" id="customer_name">
-    <br><br>
+            <div class="mb-6">
+                <label for="invoice_number" class="block text-sm font-semibold text-gray-700 mb-2">Invoice Number</label>
+                <input type="text" name="invoice_number" id="invoice_number" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm" placeholder="Enter invoice number">
+            </div>
 
-    <label for="fiscal_data">Fiscal Data</label>
-    <input type="text" name="fiscal_data" id="fiscal_data">
-    <br><br>
+            <div class="mb-6">
+                <label for="customer_number" class="block text-sm font-semibold text-gray-700 mb-2">Customer</label>
+                <select name="customer_number" id="customer_number" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm bg-white">
+                    <option value="" disabled selected>Select a customer</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->customerNumber }}">{{ $customer->name }} ({{ $customer->customerNumber }})</option>
+                    @endforeach
+                </select>
+            </div>
 
-    <label for="order_date">Order Date</label>
-    <input type="date" name="order_date" id="order_date">
-    <br><br>
+            <div class="mb-6">
+                <label for="customer_name" class="block text-sm font-semibold text-gray-700 mb-2">Customer Name</label>
+                <input type="text" name="customer_name" id="customer_name" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm" placeholder="Enter customer name">
+            </div>
 
-    <label for="delivery_address">Delivery Address</label>
-    <input type="text" name="delivery_address" id="delivery_address">
-    <br><br>
+            <div class="mb-6">
+                <label for="fiscal_data" class="block text-sm font-semibold text-gray-700 mb-2">Fiscal Data</label>
+                <input type="text" name="fiscal_data" id="fiscal_data" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm" placeholder="Enter fiscal data">
+            </div>
 
-    <label for="notes">Notes</label>
-    <textarea name="notes" id="notes"></textarea>
-    <br><br>
+            <div class="mb-6">
+                <label for="order_date" class="block text-sm font-semibold text-gray-700 mb-2">Order Date</label>
+                <input type="date" name="order_date" id="order_date" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm">
+            </div>
 
-    <label for="status">Status</label>
-    <select name="status" id="status">
-        <option value="ORDERED">Ordered</option>
-        <option value="IN_PROCESS">In Process</option>
-        <option value="IN_ROUTE">In Route</option>
-        <option value="DELIVERED">Delivered</option>
-    </select>
-    <br><br>
+            <div class="mb-6">
+                <label for="delivery_address" class="block text-sm font-semibold text-gray-700 mb-2">Delivery Address</label>
+                <input type="text" name="delivery_address" id="delivery_address" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm" placeholder="Enter delivery address">
+            </div>
 
-    <label for="total_amount">Total Amount</label>
-    <input type="text" name="total_amount" id="total_amount">
-    <br><br>
+            <div class="mb-6">
+                <label for="notes" class="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                <textarea name="notes" id="notes" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm" rows="4" placeholder="Enter additional notes"></textarea>
+            </div>
 
-    <input type="submit" value="Create">
-</form>
-<a href="{{ route('customer_orders.index') }}">Back</a>
+            <div class="mb-6">
+                <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                <select name="status" id="status" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm bg-white">
+                    <option value="ORDERED">Ordered</option>
+                    <option value="IN_PROCESS">In Process</option>
+                    <option value="IN_ROUTE">In Route</option>
+                    <option value="DELIVERED">Delivered</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label for="total_amount" class="block text-sm font-semibold text-gray-700 mb-2">Total Amount</label>
+                <input type="text" name="total_amount" id="total_amount" class="mt-1 block w-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-md shadow-sm" placeholder="Enter total amount">
+            </div>
+
+            <div class="flex justify-end space-x-4 mt-8">
+                <a href="{{ route('customer_orders.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">Cancel</a>
+                <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">Create</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
