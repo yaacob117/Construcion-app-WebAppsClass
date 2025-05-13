@@ -51,23 +51,39 @@ class OrderProductController extends Controller
             }
         }
 
-        // Calcular el total_price automáticamente
-        $total_price = $request->quantity * $request->unit_price;
-
-        $orderProduct = OrderProduct::create([
-            'order_id' => $orderId,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-            'unit_price' => $request->unit_price,
-            'total_price' => $total_price,
-        ]);
-
-        // Actualizar el total de la orden si es una orden de cliente
-        if ($orderType === 'customer') {
-            $order->updateTotalAmount();
+        // Validar que haya productos
+        if (!$request->has('products') || !is_array($request->products)) {
+            return back()->withErrors(['products' => 'At least one product is required.']);
         }
 
-        return to_route('order_products.index')->with('success', 'Product added to order successfully.');
+        try {
+            foreach ($request->products as $productData) {
+                // Validar datos del producto
+                if (empty($productData['product_id']) || empty($productData['quantity']) || empty($productData['unit_price'])) {
+                    continue; // Skip invalid entries
+                }
+
+                // Calcular el total_price automáticamente
+                $total_price = $productData['quantity'] * $productData['unit_price'];
+
+                $orderProduct = OrderProduct::create([
+                    'order_id' => $orderId,
+                    'product_id' => $productData['product_id'],
+                    'quantity' => $productData['quantity'],
+                    'unit_price' => $productData['unit_price'],
+                    'total_price' => $total_price,
+                ]);
+            }
+
+            // Actualizar el total de la orden si es una orden de cliente
+            if ($orderType === 'customer') {
+                $order->updateTotalAmount();
+            }
+
+            return to_route('order_products.index')->with('success', 'Products added to order successfully.');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Failed to add products to order: ' . $e->getMessage()]);
+        }
     }
 
     /**
