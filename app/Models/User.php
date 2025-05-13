@@ -59,11 +59,11 @@ class User extends Authenticatable
 
     public function hasRole($roleName)
     {
-        return $this->role->name === $roleName;
+        return $this->role && $this->role->name === $roleName;
     }
 
     public function hasAnyRole($roles)
     {
-        return in_array($this->role->name, (array) $roles);
+        return $this->role && in_array($this->role->name, (array) $roles);
     }
 }

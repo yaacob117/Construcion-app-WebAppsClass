@@ -15,18 +15,20 @@ class CheckRole
         }
 
         // Si el usuario es administrador, permitir todo
-        if ($request->user()->hasRole('Administrator')) {
+        if ($request->user()->role && $request->user()->role->name === 'Administrator') {
             return $next($request);
         }
 
         // Verificar si el usuario tiene alguno de los roles permitidos
-        foreach ($roles as $role) {
-            if ($request->user()->hasRole($role)) {
-                return $next($request);
+        if ($request->user()->role) {
+            foreach ($roles as $role) {
+                if ($request->user()->role->name === $role) {
+                    return $next($request);
+                }
             }
         }
 
         // Si no tiene los roles necesarios, redirigir con mensaje
-        return redirect()->back()->with('error', 'No tienes permisos para realizar esta acción.');
+        return redirect()->back()->with('error', 'No tienes permisos para realizar esta acción. Se requiere uno de estos roles: ' . implode(', ', $roles));
     }
 } 

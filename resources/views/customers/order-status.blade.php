@@ -38,9 +38,14 @@
             @endif
         </div>
 
+        <!-- Delivery Evidence -->
+        <x-delivery-evidence :order="$order" />
+
         <div class="mt-6 flex justify-center space-x-4">
             <a href="{{ route('customers.show', $customer->id) }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">Back to Customer</a>
-            <a href="{{ route('customer_orders.edit', $order->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Edit Order</a>
+            @if(auth()->user()->hasRole('Sales'))
+                <a href="{{ route('customer_orders.edit', $order->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Edit Order</a>
+            @endif
         </div>
     </div>
 </body>

@@ -22,6 +22,24 @@ class CustomerOrder extends Model
         'is_deleted',
     ];
 
+    // Relación con las evidencias de entrega
+    public function evidencePicture()
+    {
+        return $this->hasOne(EvidencePicture::class, 'order_id');
+    }
+
+    // Método helper para verificar si tiene evidencias
+    public function hasDeliveryEvidence()
+    {
+        return $this->evidencePicture()->exists();
+    }
+
+    // Método helper para verificar si la entrega está confirmada
+    public function isDeliveryConfirmed()
+    {
+        return $this->evidencePicture && $this->evidencePicture->received_photo_url !== null;
+    }
+
     public function changeStatus(string $status)
     {
         $this->status = $status;
