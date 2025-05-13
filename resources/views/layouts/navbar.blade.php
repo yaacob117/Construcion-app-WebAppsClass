@@ -11,16 +11,19 @@
                         @auth
                             @if(auth()->user()->hasAnyRole(['Administrator', 'Sales']))
                                 <a href="{{ route('customers.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Customers</a>
-                                <a href="{{ route('customer_orders.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Customer Orders</a>
-                            @endif
-
-                            @if(auth()->user()->hasAnyRole(['Administrator', 'Purchasing']))
-                                <a href="{{ route('enterprise_orders.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Enterprise Orders</a>
                             @endif
 
                             @if(auth()->user()->hasAnyRole(['Administrator', 'Sales', 'Purchasing']))
                                 <a href="{{ route('products.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Products</a>
                                 <a href="{{ route('order_products.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Order Products</a>
+                            @endif
+
+                            @if(auth()->user()->hasAnyRole(['Administrator', 'Sales']))
+                                <a href="{{ route('customer_orders.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Customer Orders</a>
+                            @endif
+
+                            @if(auth()->user()->hasAnyRole(['Administrator', 'Purchasing']))
+                                <a href="{{ route('enterprise_orders.index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Enterprise Orders</a>
                             @endif
 
                             @if(auth()->user()->hasAnyRole(['Administrator', 'Warehouse']))

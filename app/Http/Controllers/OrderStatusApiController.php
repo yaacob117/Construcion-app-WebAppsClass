@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\CustomerOrder;
 use Illuminate\Http\JsonResponse;
@@ -76,10 +75,10 @@ class OrderStatusApiController extends Controller
                 ], 404);
             }
 
-            // Buscar la orden
+            // Buscar la orden con sus productos y evidencias
             $order = CustomerOrder::where('invoice_number', $validated['invoice_number'])
-                ->where('customer_id', $customer->id)
-                ->with(['evidencePicture']) // Cargar la evidencia de entrega si existe
+                ->where('customer_number', $validated['customer_number'])
+                ->with(['evidencePicture', 'orderProducts.product'])
                 ->first();
 
             if (!$order) {
@@ -98,17 +97,33 @@ class OrderStatusApiController extends Controller
                     'customer' => [
                         'number' => $customer->customerNumber,
                         'name' => $customer->name,
-                        'company' => $customer->companyName
+                        'company' => $customer->companyName,
+                        'fiscal_data' => $order->fiscal_data,
+                        'delivery_address' => $order->delivery_address
                     ],
                     'order' => [
                         'invoice_number' => $order->invoice_number,
                         'status' => $order->status,
+                        'order_date' => $order->order_date,
+                        'notes' => $order->notes,
+                        'total_amount' => $order->total_amount,
                         'created_at' => $order->created_at->format('Y-m-d H:i:s'),
                         'updated_at' => $order->updated_at->format('Y-m-d H:i:s'),
                         'status_description' => $this->getStatusDescription($order->status)
-                    ]
+                    ],
+                    'products' => []
                 ]
             ];
+
+            // Agregar los productos de la orden
+            foreach ($order->orderProducts as $orderProduct) {
+                $response['data']['products'][] = [
+                    'name' => $orderProduct->product->name,
+                    'quantity' => $orderProduct->quantity,
+                    'unit_price' => $orderProduct->unit_price,
+                    'total_price' => $orderProduct->total_price
+                ];
+            }
 
             // Agregar información de evidencia de entrega si existe y el estado es "DELIVERED"
             if ($order->status === 'DELIVERED' && $order->evidencePicture) {
